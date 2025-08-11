@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="css/quizStyle.css">
+        <link rel="stylesheet" href="css/framework.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+    <div class="student-info">
+        <table class="info-table">
+            <thead>
+                <tr class="table-active">
+                    <th scope="col">id</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">classe</th>
+                    <th scope="col">matiere</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="quiz-container">
+        <div class="progress-questions">
+            <div class="controles">
+                <span class="question-num"></span>
+                <span class="question-point"></span>
+                <span class="time-left"></span>
+            </div>
+            <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-fill" ></div>
+            </div>
+        </div>
+        <h2 class="question"></h2>
+        <form class="answers-area">
+            <legend>Choose your answer </legend>
+
+        </form>
+        <div class="submit-answer-area mt-20">
+            <button id="submit-answer-back" >back</button>
+            <button id="restart" style="display: none;"> <i class="fa-solid fa-arrows-rotate"></i> Redémarrer </button>
+            <button id="submit-answer-next" >Next</button>
+        </div>
+ 
+    </div>
+
+    <script type="module" src="./js/quiz.js"></script>
+</body>
+</html>

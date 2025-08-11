@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/framework.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body class="bg-eee">
+    <div class="page-container d-flex">
+        <div class="sidebar bg-white p-relative">
+            <div class="sidebar-header p-20">
+                <h3 class="txt-c p-relative">Tableau de Bord Enseignant</h3>
+                <p class="mb-20 txt-">Plateforme de Test Numérique</p>
+            </div>
+            <ul class="list-none p-0 d-flex flex-column gap-5">
+                <li class="active p-20">
+                    <a class="active" href="dashboard.html">
+                        <i class="fa-solid fa-house fa-fw"></i>
+                        <span>Accueil</span>
+                    </a>
+                </li>
+                <li class="p-20">
+                    <a href="students.html">
+                        <i class="fa-solid fa-user-group"></i>
+                        <span>Élèves</span>
+                    </a>
+                </li>
+                <li class="p-20">
+                    <a href="tests.html">
+                        <i class="fa-regular fa-paste"></i>
+                        <span>Tests</span>
+                    </a>
+                </li>
+                <li class="p-20">
+                    <a href="reports.html">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Rapports</span>
+                    </a>
+                </li>
+                <li class="p-20">
+                    <a href="settings.html">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Paramètres</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="main-content d-flex flex-column gap-5 container">
+            <div class="main-header d-flex flex-between flex-wrap p-20 bg-white">
+                <div class="header">
+                    <h2>Vue Global</h2>
+                    <p>Suivi des élèves et gestion des évaluations</p>
+                </div>
+                <div class="upload-area" id="uploadArea">
+                    <label class="upload-btn p-10 brad-8 d-flex gap-10 flex-align-items">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        Ajouter des fichiers ou dossiers
+                        <input type="file" id="fileInput" class="hidden" multiple accept=".json" />
+                    </label>
+                    <div id="fileList"></div>
+                </div>
+            </div>
+            <div class="dashboard-content p-20 bg-eee flex-1">
+                <div class="class-filter p-5 txt-right">
+                    <select name="classes" id="classes" class="brad-8">
+                        <option value="allClasses" selected>Toutes les classes</option>
+                    </select>
+                </div>
+                <div class="summary-cards d-flex gap-10 flex-wrap mb-20">
+                    <div class="card bg-white brad-8 p-20 d-flex flex-column gap-25" style="min-width: 250px;">
+                        <div class="card-header d-flex flex-between font-14">
+                            <h3>Total des élèves</h3>
+                            <i class="fa-solid fa-user-group"></i>
+                        </div>
+                        <p id="total-students" class="font-40"></p>
+                    </div>
+                    <div class="card bg-white brad-8 p-20 d-flex flex-column gap-25" style="min-width: 250px;">
+                        <div class="card-header d-flex flex-between font-14">
+                            <h3>Moyenne Générale</h3>
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        </div>
+                        <p id="avg-score" class="font-40"></p>
+                    </div>
+                    <div class="card bg-white brad-8 p-20 d-flex flex-column gap-25" style="min-width: 250px;">
+                        <div class="card-header d-flex flex-between font-14">
+                            <h3>Total des Classes</h3>
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <p id="total-classes" class="font-40"></p>
+                    </div>
+                    <div class="card bg-white brad-8 p-20 d-flex flex-column gap-25" style="min-width: 250px;">
+                        <div class="card-header d-flex flex-between font-14">
+                            <h3>Matière du Test</h3>
+                            <i class="fa-brands fa-leanpub"></i>
+                        </div>
+                        <p id="test-topic" class="font-40"></p>
+                    </div>
+                    <div class="card bg-white brad-8 p-20 d-flex flex-column gap-25" style="min-width: 250px;">
+                        <div class="card-header d-flex flex-between font-14">
+                            <h3>Enseignant</h3>
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                        <p id="test-teacher" class="font-40"></p>
+                    </div>
+                </div>
+                <div class="charts-cards d-flex gap-10 flex-wrap mb-20">
+                    <div class="card bg-white brad-8 p-20 d-flex flex-column gap-20" style="min-width: 450px;">
+                        <div class="card-header d-flex gap-10 font-16">
+                            <i class="fa-solid fa-chart-line"></i><h3>Moyennes par Classe</h3>
+                        </div>
+                        <div id="progress-container"></div>
+                    </div>
+                    <div class="card bg-white brad-8 p-20 d-flex flex-column gap-20" style="min-width: 450px;">
+                        <div class="card-header d-flex gap-10 font-16">
+                            <i class="fa-solid fa-list-check"></i><h3>Résultats par Thème</h3>
+                        </div>
+                        <div id="topic-progress-container"></div>
+                    </div>
+                    <div class="card bg-white brad-8 p-20 d-flex flex-column gap-20" style="min-width: 450px;">
+                        <div class="card-header d-flex gap-10 font-16">
+                            <i class="fa-solid fa-check-double"></i><h3>Résultats des Élèves</h3>
+                        </div>
+                        <div id="students-stats-container">
+                            <canvas id="students-stats-chart" class="pb-10" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="charts-info-cards d-flex gap-10 flex-wrap flex-column">
+                    <div class="diagno-header d-flex flex-align-items gap-10 mb-15">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <h2>Accès et Matériel des Élèves</h2>
+                    </div>
+                    <div id="background-questions" class="charts-cards d-flex flex-wrap gap-10 mb-20"></div>
+                </div>
+                <div class="tables-cards d-flex gap-10 flex-column">
+                    <div class="diagno-header d-flex flex-align-items gap-10 mb-15">
+                        <i class="fa-solid fa-table-list"></i>
+                        <h2>Résultats des Élèves</h2>
+                    </div>
+                    <div class="students-table bg-white brad-8 p-15">
+                        <div class="table-search p-15 brad-8 d-flex flex-align-items gap-10 bg-eee">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input id="student-search-input" class="p-10 brad-8" type="text" name="student-search" placeholder="Rechercher un élève..." style="width: 100%;">
+                            <div class="class-filter">
+                                <select name="classes" id="table-filter-classes" class="brad-8 bg-eee">
+                                    <option value="allClasses" selected>Toutes les classes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="main-table p-15">
+                            <table style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Note</th>
+                                        <th>Statut</th>
+                                        <th>Classe</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="print-reports d-flex flex-column gap-10">
+                <div class="preview-report">
+                    <button id="print-report"><i class="fa-solid fa-print"></i> <span>Imprimer Rapport</span></button>
+                </div>
+                <div class="download-pdf">
+                    <button id="download-pdf" class="download-pdf-btn"><i class="fa-solid fa-download"></i> <span>Exporter en PDF</span></button>
+                </div>
+                <div id="csv-export" class="csv-export">
+                    <button><i class="fa-solid fa-file-export"></i> <span>Exporter en CSV</span> </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pdf-container" style="display: none;"></div>
+    <div id="report-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="no-print">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow: auto;
+        }
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            overflow-y: auto;
+        }
+        #close-modal {
+            margin-bottom: 10px;
+            background-color: red;
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

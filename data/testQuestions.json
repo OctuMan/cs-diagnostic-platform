@@ -1,0 +1,132 @@
+[
+  
+  {
+    "id": 1,
+    "type" : "info",
+    "question": "As-tu un ordinateur ?",
+    "answers": ["Oui", "Non"],
+    "correct": null,
+    "topic": "info",
+    "point": null
+  },
+  {
+    "id": 2,
+    "type" : "info",
+    "question": "As-tu accès à Internet ?",
+    "answers": ["Oui", "Non"],
+    "correct": null,
+    "topic": "info",
+    "point": null
+  },
+  {
+    "id": 3,
+    "type" : "info",
+    "question": "As-tu étudié l’informatique au collège ?",
+    "answers": ["Oui", "Non"],
+    "correct": null,
+    "topic": "info",
+    "point": null
+  },
+  {
+    "id": 4,
+    "type" : "qcm",
+    "question": "C’est quoi un GPU ?",
+    "answers": ["Un smartphone", "Une carte graphique", "Un câble", "Un jeu"],
+    "correct": 1,
+    "topic": "computerSystems",
+    "point": 1
+  },
+  {
+    "id": 5,
+    "type" : "qcm",
+    "question": "Quel est le cerveau de l’ordinateur ?",
+    "answers": ["CPU", "Clavier", "Souris", "RAM"],
+    "correct": 0,
+    "topic": "computerSystems",
+    "point": 1
+  },
+  {
+    "id": 6,
+    "type" : "qcm",
+    "question": "Lequel est un périphérique d’entrée ?",
+    "answers": ["Écran", "Imprimante", "Clavier", "Haut-parleur"],
+    "correct": 2,
+    "topic": "hardware",
+    "point": 1
+  },
+  {
+    "id": 7,
+    "type" : "qcm",
+    "question": "Quelle mémoire est volatile (perd les données quand l’ordi s’éteint) ?",
+    "answers": ["SSD", "ROM", "RAM", "Disque dur"],
+    "correct": 2,
+    "topic": "memory",
+    "point": 2
+  },
+  {
+    "id": 8,
+    "type" : "qcm",
+    "question": "Quel logiciel gère les composants de l’ordinateur ?",
+    "answers": ["Traitement de texte", "Système d’exploitation", "Navigateur", "Compilateur"],
+    "correct": 1,
+    "topic": "software",
+    "point": 2
+  },
+  {
+    "id": 9,
+    "type" : "qcm",
+    "question": "Lequel n’est pas un système d’exploitation ?",
+    "answers": ["Windows", "Linux", "Google Chrome", "macOS"],
+    "correct": 2,
+    "topic": "software",
+    "point": 2
+  },
+  {
+    "id": 10,
+    "type" : "qcm",
+    "question": "Lequel est un langage de programmation ?",
+    "answers": ["HTML", "Python", "HTTP", "Wi-Fi"],
+    "correct": 1,
+    "topic": "programming",
+    "point": 2
+  },
+  {
+  "id": 11,
+  "type" : "association",
+  "question": "Associe chaque composant à son nom :",
+  "answers": [
+    {"source" : "cpu.png", "target" : "Processeur"},
+    {"source" : "hardDrive.png", "target" : "Disque Dur"},
+    {"source" : "headset.png", "target" : "Casque"},
+    {"source" : "keyboard.png", "target" : "Clavier"},
+    {"source" : "monitor.png", "target" : "Ecran"},
+    {"source" : "mouse.png", "target" : "Souris"},
+    {"source" : "printer.png", "target" : "Imprimante"},
+    {"source" : "router.png", "target" : "Routeur"},
+    {"source" : "sdCard.png", "target" : "Carte Mémoire"},
+    {"source" : "speaker.png", "target" : "Haut-parleur"},
+    {"source" : "usb.png", "target" : "Clé Usb"},
+    {"source" : "webcam.png", "target" : "Caméra Web"}
+  ],
+  "topic": "computerSystems",
+  "point": 6
+},
+{
+  "id": 12,
+  "type": "img",
+  "question": "C’est quoi cet composant ?",
+  "image": "mb.png",
+  "validAnswers": [
+    "carte mère",
+    "carte mere",
+    "motherboard",
+    "MotherBoard",
+    "mb",
+    "mobo"
+  ],
+  "topic" :"computerSystems",
+  "point" : 3
+}
+
+  
+]

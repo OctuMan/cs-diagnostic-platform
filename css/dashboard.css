@@ -455,3 +455,21 @@ tbody tr:nth-child(even) {
 .prog-fill-blue{
   background-color: #0784eb;
 }
+
+.sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+/* Slide-in effect */
+.sidebar:not(.hidden) {
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}

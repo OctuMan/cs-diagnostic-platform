@@ -135,3 +135,71 @@
 .hidden {
     display: none;
 }
+/* Responsive Breakpoints (Mobile-first) */
+/* md = 768px and up */
+@media (min-width: 768px) {
+  .md\:flex { display: flex !important; }
+  .md\:block { display: block !important; }
+  .md\:hidden { display: none !important; }
+  .md\:flex-row { flex-direction: row !important; }
+  .md\:flex-col { flex-direction: column !important; }
+  .md\:flex-wrap { flex-wrap: wrap !important; }
+  .md\:items-center { align-items: center !important; }
+  .md\:justify-between { justify-content: space-between !important; }
+}
+
+/* lg = 1024px and up */
+@media (min-width: 1024px) {
+  .lg\:w-64 { width: 256px !important; } /* ~64 * 4px */
+  .lg\:flex { display: flex !important; }
+  .lg\:hidden { display: none !important; }
+}
+.sidebar {
+  width: 100%;
+  height: auto;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+/* On medium screens and up */
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 256px; /* ~64 in Tailwind scale */
+    height: 100vh;
+    z-index: 999;
+    box-shadow: 0 0 1px #c7c7c7;
+    transform: none;
+  }
+  .page-container {
+    margin-left: 0;
+  }
+}
+
+/* On large screens */
+@media (min-width: 1024px) {
+  .lg\:sidebar {
+    width: 280px;
+  }
+  .page-container {
+    margin-left: 280px;
+  }
+}
+/* Margin Left Utilities */
+.ml-0  { margin-left: 0; }
+.ml-4  { margin-left: 16px; }
+.ml-8  { margin-left: 32px; }
+.ml-16 { margin-left: 64px; }  /* md:ml-64 */
+.ml-20 { margin-left: 80px; }
+.ml-24 { margin-left: 96px; }
+.ml-32 { margin-left: 128px; }
+.ml-64 { margin-left: 256px; } /* ~64 */
+.ml-70 { margin-left: 280px; } /* lg:ml-70 */
+
+/* You can add mr, mt, mb, etc. later */

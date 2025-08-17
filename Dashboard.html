@@ -13,9 +13,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
-<body class="bg-eee">
+<body class="bg-eee ">
     <div class="page-container d-flex">
-        <div class="sidebar bg-white p-relative">
+        <div class="sidebar bg-white p-relative " id="sidebar">
             <div class="sidebar-header p-20">
                 <h3 class="txt-c p-relative">Tableau de Bord Enseignant</h3>
                 <p class="mb-20 txt-">Plateforme de Test Numérique</p>
@@ -52,9 +52,15 @@
                     </a>
                 </li>
             </ul>
+
         </div>
-        <div class="main-content d-flex flex-column gap-5 container">
+ 
+        <div class="main-content d-flex flex-column gap-5 container md:ml-64 lg:ml-70">
             <div class="main-header d-flex flex-between flex-wrap p-20 bg-white">
+                <!-- Mobile Menu Toggle -->
+            <button id="menu-toggle" class="p-10 brad-8 md:hidden">
+                <i class="fa-solid fa-bars"></i>
+            </button>
                 <div class="header">
                     <h2>Vue Global</h2>
                     <p>Suivi des élèves et gestion des évaluations</p>

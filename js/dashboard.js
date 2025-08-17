@@ -1281,5 +1281,16 @@ document.getElementById('csv-export').addEventListener('click', () => {
   exportToCSV(data, 'student-results.csv');
 });
 
+// Toggle Sidebar on Mobile
+document.getElementById('menu-toggle')?.addEventListener('click', function () {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('hidden');
+});
 
+// Optional: Close sidebar when clicking a nav link
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('sidebar')?.classList.add('hidden');
+  });
+});
 

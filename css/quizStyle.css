@@ -176,31 +176,36 @@ legend{
 /* .student-info {
   background-color: #eee;
 } */
-.student-info table{
-  text-align: center;
-  
+.student-info {
+  overflow-x: auto;  
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
-.student-info table thead{
-  background-color: #6b6b6b;
+
+.student-info table {
+  width: 100%;        /* Take full width */
+  min-width: 600px;   /* Keep columns readable */
+  border: 1px solid #dbdada;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+.student-info table thead {
+  background-color: #eee;
   font-size: 14px;
   text-transform: uppercase;
-  color: #fff;
-  
+  color: #000;
 }
-.student-info table tbody tr td{
-    color: #333;
-    border: 1px solid #dbdada;
-    
+
+.student-info table tbody tr td {
+  color: #333;
+  border: 1px solid #dbdada;
 }
-.student-info table thead th, .student-info table tbody tr td{
-  /* background-color: #fff; */
+
+.student-info table thead th,
+.student-info table tbody tr td {
   padding: 10px;
 }
 
-.student-info table tbody tr td, .student-info table thead th {
-  border-radius: 4px;
-  
-}
 .drag-container{
     background-color: #eee;
     width: 800px;

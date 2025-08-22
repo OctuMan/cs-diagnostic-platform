@@ -1,4 +1,6 @@
 import {shuffleArray} from './utilities.js';
+const IS_PREVIEW = localStorage.getItem("isPreview") === "true";
+
 
 // catch elements 
 const resultArea = document.querySelector('.quiz-container');
@@ -39,18 +41,37 @@ let testSettings = {
 
 // Fetch Questions 
 async function loadQuestions() {
+  // Check if there's a dynamic test in localStorage
+  const dynamicTest = localStorage.getItem("dynamicQuiz");
+  if (dynamicTest) {
+    try {
+      questionData = JSON.parse(dynamicTest);
+      totalQuestions = questionData.length;
+
+      // Optional: clear after use (one-time preview)
+      // localStorage.removeItem("dynamicQuiz");
+
+      startTest();
+      return;
+    } catch (err) {
+      console.error("Erreur de parsing du test dynamique:", err);
+      alert("Test dynamique invalide. Chargement du fichier par défaut.");
+    }
+  }
+
+  //  Fallback: load from static JSON
   const url = "../data/testQuestions.json";
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Statut de réponse : ${response.status}`);
+      throw new Error(`Échec du chargement : ${response.status}`);
     }
-
     questionData = await response.json();
     totalQuestions = questionData.length;
     startTest();
   } catch (error) {
-    console.error(error.message);
+    console.error("Erreur lors du chargement des questions:", error.message);
+    alert("Impossible de charger les questions. Vérifiez le fichier testQuestions.json.");
   }
 }
 document.addEventListener('DOMContentLoaded', () => {
@@ -205,7 +226,13 @@ function testDone() {
     results: results,
     exportedAt: new Date().toISOString()
   };
-  saveResult(currentSession);
+if (!isPreviewMode) {
+    const key = 'quizResults';
+    let resultsList = JSON.parse(localStorage.getItem(key)) || [];
+    resultsList.push(currentSession);
+    localStorage.setItem(key, JSON.stringify(resultsList));
+  }
+ 
   studentResultsScreen();
   exportResultsAsFile(currentSession);
 }
@@ -228,14 +255,31 @@ function updateNextButtonText() {
     nextBtn.textContent = "Suivant";
   }
 }
-
 const ST_KEY = 'students';
 let studentSessions = JSON.parse(localStorage.getItem(ST_KEY)) || [];
-const activeStudent = studentSessions[studentSessions.length - 1];
 
-if (!activeStudent) {
-  alert("Aucune information sur l'élève trouvée. Retourne au formulaire.");
-  window.location.href = "index.html";
+// ✅ Check if we're in preview mode
+const isPreviewMode = localStorage.getItem("isPreview") === "true";
+
+let activeStudent = null;
+
+if (isPreviewMode) {
+  
+  activeStudent = {
+    firstName: "Professeur",
+    lastName: "Preview",
+    className: "Test",
+    date: new Date().toISOString()
+  };
+} else {
+  // 🧑‍🎓 Normal mode: get last student
+  activeStudent = studentSessions[studentSessions.length - 1];
+
+  if (!activeStudent) {
+    alert("Aucune information sur l'élève trouvée. Retourne au formulaire.");
+    window.location.href = "form.html"; // or index.html
+    throw new Error("No student data");
+  }
 }
 
 function generateStudentId() {
@@ -463,7 +507,7 @@ function renderAssociationQuestion(qObj){
     oneElement.classList.add('dragElement');
     const img = document.createElement('img');
     img.id= pair.target;
-    img.src = `./images/${pair.source}`;
+    img.src = `../images/${pair.source}`;
     img.setAttribute("data-source", pair.target);
     img.setAttribute("draggable", "true");
     img.style.width = "80px";
@@ -559,22 +603,24 @@ document.getElementById('restart').addEventListener('click',()=> {
 })
   
 }
-
-function renderImgQuestion(qObj){
-  const imgName = qObj.image;
+function renderImgQuestion(qObj) {
+  const imgName = qObj.source; 
   const img = document.createElement('img');
-  img.src = `../images/${imgName}`;
+  img.src = `../images/${imgName}`; // Adjust path
   img.style.width = "200px";
+
   questionArea.textContent = qObj.question;
   answersArea.replaceChildren();
+
   const imgDiv = document.createElement('div');
   imgDiv.classList.add('imgContainer');
-  imgDiv.appendChild(img)
+  imgDiv.appendChild(img);
+
   const inputTest = document.createElement('input');
   inputTest.type = 'text';
   inputTest.id = 'input-image';
   inputTest.placeholder = 'Votre réponse ici ...';
-  
+
   answersArea.append(imgDiv, inputTest);
   inputTest.focus();
   setupInputImgLestner();

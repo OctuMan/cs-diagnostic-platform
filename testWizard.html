@@ -10,27 +10,37 @@
     <title>TestBuilder</title>
 </head>
 <body>
-    <section class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6 my-4">
-    <!-- Question List -->
-   <div class="question-list">
+  <section class="p-4 md:p-10 ">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+       <div class="questions-list border shadow-lg px-2 grid h-fit gap-3 py-5 bg-[#fdfdfd] rounded-lg md:px-4 ">
+        <div class="controles-btns flex gap-2">
+       <button id="" class="addBtn p-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"><i class="fa-solid fa-plus mr-2"></i>Add Question</button>
+       <button id="previewBtn" class="p-2 border border-gray-500 py-2  rounded-lg transition"><i class="fa-solid fa-eye mr-2"></i>Preview Test</button>
+    </div>
+      <h1 class="text-xl font-semibold mb-2">Questions List</h1>
+      <div id="questions-card" class="question-cards grid gap-3">
 
-        <div class="md:col-span-1 flex flex-col gap-3"> 
-          <button id="addBtn" class="mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"><i class="fa-solid fa-plus mr-2"></i>Add Question</button>
-          <h2 class="text-xl font-bold mb-4">Questions</h2>
-        <div class="question-cards flex flex-col gap-2 overflow-y-auto max-h-[600px]">
-        <div class="">
+        <p class="italic text-gray-500">Questions will appear here ...</p>
+      </div>
+      
+    </div>
+    
+   
+<div id="question-editor" 
+     class="questions-editor border shadow-xl px-4 py-8 bg-[#fdfdfd] rounded-lg flex flex-col items-center justify-center gap-3 text-gray-500 italic">
 
-        </div>
-        </div>
+  <button 
+          class="addBtn flex items-center justify-center gap-2 w-full border-2 border-dashed border-gray-400 py-3 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition">
+    <i class="fa-solid fa-plus"></i>
+    <span class="font-medium not-italic">Add Question</span>
+  </button>
 
-        </div>
-  </div>
-  <!-- Question Editor -->
-   <div class="question-editor" id="question-editor">
+  <p class="text-sm">Click "Add Question" to start</p>
+</div>
 
-   </div>
-
-</section>
+    </div>
+   
+  </section>
  <script src="./js/testBuilder.js"></script>
 </body>
-</html>
+</html>    

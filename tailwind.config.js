@@ -1,6 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./*.html'],
+  content: [
+    "./*.html",
+    "./js/**/*.js",
+  ],
+  safelist: [
+    'text-red-500',
+    'hover:text-red-500',
+    'hover:text-red-700',
+  ],
   theme: {
     extend: {
       colors: {

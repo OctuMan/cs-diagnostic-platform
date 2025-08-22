@@ -318,7 +318,8 @@ function addAssociationPair(container) {
   const removeBtn = document.createElement('button');
   removeBtn.type = 'button';
   removeBtn.className = 'p-2 text-red-500 hover:text-red-700 self-end md:self-center';
-  removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+  removeBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500-important"></i>';
+  removeBtn.style.color = '#ef4444';
   removeBtn.addEventListener('click', () => pairRow.remove());
 
   pairRow.append(imgDiv, arrowWrap, targetDiv, removeBtn);
@@ -464,7 +465,8 @@ function renderQuestions(questionData) {
     editBtn.setAttribute('data-id', question.id);
 
     const deleteBtn = document.createElement('i');
-    deleteBtn.className = "delete-btn fa-solid fa-trash cursor-pointer hover:text-red-500 text-red-500 transition";
+    deleteBtn.className = "delete-btn  fa-solid fa-trash cursor-pointer hover:text-red-500 text-red-500-important transition";
+    deleteBtn.style.color = '#ef4444';
     deleteBtn.setAttribute('data-id', question.id);
    
 

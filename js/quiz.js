@@ -507,7 +507,7 @@ function renderAssociationQuestion(qObj){
     oneElement.classList.add('dragElement');
     const img = document.createElement('img');
     img.id= pair.target;
-    img.src = `/images/${pair.source}`;
+    img.src = pair.source;
     img.setAttribute("data-source", pair.target);
     img.setAttribute("draggable", "true");
     img.style.width = "80px";
@@ -602,11 +602,10 @@ document.getElementById('restart').addEventListener('click',()=> {
     responce.length = 0;
 })
   
-}
-function renderImgQuestion(qObj) {
-  const imgName = qObj.source; 
+}function renderImgQuestion(qObj) {
+  const imgData = qObj.source; // This is Base64
   const img = document.createElement('img');
-  img.src = `/images/${imgName}`; // Adjust path
+  img.src = imgData; // ✅ Directly assign Base64
   img.style.width = "200px";
 
   questionArea.textContent = qObj.question;

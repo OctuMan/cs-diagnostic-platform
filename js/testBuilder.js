@@ -125,22 +125,23 @@ const id = existingId || "id-" + Date.now();
   }
 
   else if (question.type === 'association') {
-    const pairs = form.querySelectorAll('.pair-row');
-    question.answers = Array.from(pairs).map(pair => {
-      const imgInput = pair.querySelector('input[type="file"]');
-      const targetInput = pair.querySelector('input[name="associationTarget"]');
-      const file = imgInput.files[0];
-      return {
-        source: file ? file.name : null,
-        target: targetInput.value.trim()
-      };
-    }).filter(a => a.source && a.target); // Only valid pairs
+  const pairs = form.querySelectorAll('.pair-row');
+  question.answers = Array.from(pairs).map(pair => {
+    const imgInput = pair.querySelector('input[type="file"]');
+    const targetInput = pair.querySelector('input[name="associationTarget"]');
+    const file = imgInput.files[0];
 
-    if (question.answers.length === 0) {
-      alert("❌ Association: Add at least one image and target.");
-      return;
-    }
+    return {
+      source: imgInput.dataset.imageData, // ✅ Base64 string
+      target: targetInput.value.trim()
+    };
+  }).filter(a => a.source && a.target); // Only valid pairs
+
+  if (question.answers.length === 0) {
+    alert("❌ Association: Add at least one image and target.");
+    return;
   }
+}
 
   else if (question.type === 'img') {
     const imgInput = form.querySelector('input[name="questionImg"]');
@@ -271,7 +272,6 @@ function renderAssociationFields() {
   container.append(pairsContainer, addPairBtn);
   return container;
 }
-
 function addAssociationPair(container) {
   const pairRow = document.createElement('div');
   pairRow.className = 'pair-row flex flex-col flex-wrap md:flex-row gap-3 p-3 border border-dashed border-gray-300 rounded-lg bg-gray-50 md:items-center';
@@ -289,6 +289,19 @@ function addAssociationPair(container) {
   imgInput.accept = 'image/png, image/jpeg';
   imgInput.required = true;
   imgInput.className = 'border p-2 rounded text-sm';
+
+  // ✅ Add event listener to read Base64
+  imgInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      // Save Base64 on the input for later access
+      imgInput.dataset.imageData = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 
   imgDiv.append(imgLabel, imgInput);
 
@@ -318,8 +331,7 @@ function addAssociationPair(container) {
   const removeBtn = document.createElement('button');
   removeBtn.type = 'button';
   removeBtn.className = 'p-2 text-red-500 hover:text-red-700 self-end md:self-center';
-  removeBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500-important"></i>';
-  removeBtn.style.color = '#ef4444';
+  removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
   removeBtn.addEventListener('click', () => pairRow.remove());
 
   pairRow.append(imgDiv, arrowWrap, targetDiv, removeBtn);

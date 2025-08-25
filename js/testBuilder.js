@@ -411,10 +411,12 @@ document.getElementById('sendBtn').addEventListener('click', () => {
   localStorage.setItem(quizId, JSON.stringify(questions));
 
   // Save this ID as the current quiz
+
   localStorage.setItem("currentQuizId", quizId);
 
-  // Generate short link with just the ID
-  const link = `form.html?quiz=${quizId}`;
+  // Generate short link with just the ID 
+  const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+  const link = `${baseUrl}form.html?quiz=${quizId}`;
 
 
 

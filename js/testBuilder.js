@@ -399,17 +399,23 @@ function setupEventListeners() {
 
   //Send Quiz link 
 document.getElementById('sendBtn').addEventListener('click', () => {
-  if (questions.length === 0) {
+    if (questions.length === 0) {
     alert("No questions to preview.");
     return;
   }
 
-  // Convert quiz to a base64 string (safe for URL)
-  const quizData = btoa(JSON.stringify(questions));
+  // Generate a unique ID
+  const quizId = "quiz-" + Date.now();
 
-  // Generate a sharable link
-  const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
-const link = `${baseUrl}form.html?quiz=${quizData}`;
+  // Save quiz locally
+  localStorage.setItem(quizId, JSON.stringify(questions));
+
+  // Save this ID as the current quiz
+  localStorage.setItem("currentQuizId", quizId);
+
+  // Generate short link with just the ID
+  const link = `${window.location.origin}/form.html?quizId=${quizId}`;
+
 
 
   // Show link (copy/share)

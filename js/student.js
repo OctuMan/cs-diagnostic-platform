@@ -45,17 +45,15 @@ function clearFields(){
         document.getElementById('lastName').value ="";
         document.getElementById('studentClass').value ="";
 }
-
-// Check if quiz data is in URL
 const urlParams = new URLSearchParams(window.location.search);
-const quizParam = urlParams.get("quiz");
+const quizId = urlParams.get("quizId");
 
-if (quizParam) {
-  try {
-    const quizData = JSON.parse(atob(quizParam));
-    localStorage.setItem("dynamicQuiz", JSON.stringify(quizData));
+if (quizId) {
+  const quizData = localStorage.getItem(quizId);
+  if (quizData) {
+    localStorage.setItem("dynamicQuiz", quizData);
     localStorage.setItem("isPreview", "false");
-  } catch (e) {
-    console.error("Invalid quiz data in link", e);
+  } else {
+    alert("Quiz introuvable !");
   }
 }

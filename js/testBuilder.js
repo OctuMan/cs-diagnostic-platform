@@ -414,7 +414,8 @@ document.getElementById('sendBtn').addEventListener('click', () => {
   localStorage.setItem("currentQuizId", quizId);
 
   // Generate short link with just the ID
-  const link = `${window.location.origin}/form.html?quizId=${quizId}`;
+  const link = `form.html?quiz=${quizId}`;
+
 
 
 

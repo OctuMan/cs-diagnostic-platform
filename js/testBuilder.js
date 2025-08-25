@@ -411,15 +411,35 @@ document.getElementById('sendBtn').addEventListener('click', () => {
   const link = `${window.location.origin}/form.html?quiz=${quizData}`;
 
   // Show link (copy/share)
-    const questionEditor = document.getElementById('question-editor');
-  questionEditor.innerHTML = '';
-  const divLink = document.createElement('div');
-  divLink.className ='w-[100%] bg-gray-100 p-5 rounded-xl'
-  const copyLink = document.createElement('p');
-  copyLink.textContent = link;
-  copyLink.className='overflow-auto word-break w-[100%] inline-block'
-  divLink.append(copyLink);
-  questionEditor.appendChild(divLink)
+const questionEditor = document.getElementById('question-editor');
+questionEditor.innerHTML = '';
+
+const divLink = document.createElement('div');
+divLink.className = 'w-full bg-gray-50 border border-gray-300 p-4 rounded-2xl shadow-sm flex items-center justify-between gap-3';
+
+// Text box (link)
+const linkBox = document.createElement('input');
+linkBox.type = 'text';
+linkBox.value = link;
+linkBox.readOnly = true;
+linkBox.className = 'flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono text-gray-700 focus:outline-none cursor-text';
+
+// Copy button
+const copyBtn = document.createElement('button');
+copyBtn.textContent = '📋 Copy';
+copyBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition';
+
+// Copy to clipboard
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(link);
+  copyBtn.textContent = '✅ Copied !';
+  setTimeout(() => (copyBtn.textContent = '📋 Copy'), 2000);
+});
+
+// Append
+divLink.append(linkBox, copyBtn);
+questionEditor.appendChild(divLink);
+
 
 });
 

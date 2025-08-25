@@ -408,7 +408,9 @@ document.getElementById('sendBtn').addEventListener('click', () => {
   const quizData = btoa(JSON.stringify(questions));
 
   // Generate a sharable link
-  const link = `${window.location.origin}/form.html?quiz=${quizData}`;
+  const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+const link = `${baseUrl}form.html?quiz=${quizData}`;
+
 
   // Show link (copy/share)
 const questionEditor = document.getElementById('question-editor');

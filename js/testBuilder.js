@@ -1,3 +1,5 @@
+
+
 function renderAddQuestionForm() {
   const questionEditor = document.getElementById('question-editor');
   questionEditor.innerHTML = '';
@@ -447,9 +449,25 @@ copyBtn.addEventListener('click', () => {
   setTimeout(() => (copyBtn.textContent = '📋 Copy'), 2000);
 });
 
+  const qrDisc = document.createElement('p')
+  qrDisc.textContent = 'Or Scan This QR Code'
+    
+  const qrCodeContainer = document.createElement("div");
+
+ 
+
+    // Create a new QRCode instance
+    const qrcode = new QRCode(qrCodeContainer, {
+        text: link,
+        width: 180,
+        height: 180,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // Error correction level (L, M, Q, H)
+    });
 // Append
 divLink.append(linkBox, copyBtn);
-questionEditor.appendChild(divLink);
+questionEditor.append(divLink,qrDisc, qrCodeContainer);
 
 
 });

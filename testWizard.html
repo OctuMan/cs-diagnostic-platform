@@ -13,9 +13,11 @@
   <section class="p-4 md:p-10 ">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
        <div class="questions-list border shadow-lg px-2 grid h-fit gap-3 py-5 bg-[#fdfdfd] rounded-lg md:px-4 ">
-        <div class="controles-btns flex gap-2">
+        <div class="controles-btns flex gap-2 flex-wrap">
        <button id="" class="addBtn p-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"><i class="fa-solid fa-plus mr-2"></i>Add Question</button>
-       <button id="previewBtn" class="p-2 border border-gray-500 py-2  rounded-lg transition"><i class="fa-solid fa-eye mr-2"></i>Preview Test</button>
+       <button id="previewBtn" class="p-2 border border-gray-500 py-2 rounded-lg transition"><i class="fa-solid fa-eye mr-2"></i>Preview Test</button>
+        <button id="sendBtn" class="p-2 border py-2  rounded-lg transition border-white bg-[#24A1DE] text-white"><i class="fa-solid fa-link  mr-2"></i>Send Test</button>
+         <button id="downloadBtn" class="p-2 border  bg-green-600 border-white text-white rounded-lg transition"><i class="fa-solid fa-download mr-2"></i>Download Test</button>
     </div>
       <h1 class="text-xl font-semibold mb-2">Questions List</h1>
       <div id="questions-card" class="question-cards grid gap-3">
@@ -27,7 +29,7 @@
     
    
 <div id="question-editor" 
-     class="questions-editor border shadow-xl px-4 py-8 bg-[#fdfdfd] rounded-lg flex flex-col items-center justify-center gap-3 text-gray-500 italic">
+     class="questions-editor border shadow-xl px-4 py-8 bg-[#fdfdfd] rounded-lg flex flex-col items-center  gap-3 text-gray-500 italic">
 
   <button 
           class="addBtn flex items-center justify-center gap-2 w-full border-2 border-dashed border-gray-400 py-3 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition">

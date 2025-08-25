@@ -258,13 +258,13 @@ function updateNextButtonText() {
 const ST_KEY = 'students';
 let studentSessions = JSON.parse(localStorage.getItem(ST_KEY)) || [];
 
-// ✅ Check if we're in preview mode
+// ✅ Boolean check, not string
 const isPreviewMode = localStorage.getItem("isPreview") === "true";
 
 let activeStudent = null;
 
 if (isPreviewMode) {
-  
+  // 👨‍🏫 Fake student for preview mode
   activeStudent = {
     firstName: "Professeur",
     lastName: "Preview",
@@ -277,10 +277,11 @@ if (isPreviewMode) {
 
   if (!activeStudent) {
     alert("Aucune information sur l'élève trouvée. Retourne au formulaire.");
-    window.location.href = "form.html"; // or index.html
+    window.location.href = "form.html"; 
     throw new Error("No student data");
   }
 }
+
 
 function generateStudentId() {
   return 'student_' + Math.floor(Math.random() * 1000000);
@@ -415,7 +416,7 @@ function analyzeResults(userAnswers, questionData) {
  
         
       }else if(question.type === 'img'){
-const correctAnswers = Array.isArray(question.validAnswers) ? question.validAnswers : [];
+        const correctAnswers = question.correct ? [question.correct] : [];
   const point = question.point || 1;
   results.totalPoints += point;
 
@@ -602,11 +603,16 @@ document.getElementById('restart').addEventListener('click',()=> {
     responce.length = 0;
 })
   
-}function renderImgQuestion(qObj) {
+}
+function renderImgQuestion(qObj) {
   const imgData = qObj.source; // This is Base64
   const img = document.createElement('img');
-  img.src = imgData; // ✅ Directly assign Base64
+  
+  // ✅ Assign Base64 directly
+  img.src = imgData;
   img.style.width = "200px";
+  img.style.maxHeight = "300px";
+  img.style.objectFit = "contain";
 
   questionArea.textContent = qObj.question;
   answersArea.replaceChildren();
@@ -618,13 +624,13 @@ document.getElementById('restart').addEventListener('click',()=> {
   const inputTest = document.createElement('input');
   inputTest.type = 'text';
   inputTest.id = 'input-image';
+  inputTest.style.width = "200px"
   inputTest.placeholder = 'Votre réponse ici ...';
 
   answersArea.append(imgDiv, inputTest);
   inputTest.focus();
   setupInputImgLestner();
 }
-
 function setupInputImgLestner(){
   const inputImg = document.getElementById('input-image');
   inputImg.addEventListener('input', ()=> {

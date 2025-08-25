@@ -143,16 +143,26 @@ const id = existingId || "id-" + Date.now();
   }
 }
 
-  else if (question.type === 'img') {
-    const imgInput = form.querySelector('input[name="questionImg"]');
-    const file = imgInput.files[0];
-    if (!file) {
-      alert("❌ Please upload an image.");
-      return;
-    }
-    question.source = file.name;
-    question.correct = data.correct?.trim() || null;
+else if (question.type === 'img') {
+  const imgInput = form.querySelector('input[name="questionImg"]');
+  const file = imgInput.files[0];
+  if (!file) {
+    alert("❌ Please upload an image.");
+    return;
   }
+
+  const base64Image = imgInput.dataset.imageData;
+
+  
+
+  if (!base64Image) {
+    alert("❌ Image not loaded. Wait for upload.");
+    return;
+  }
+
+  question.source = base64Image; 
+  question.validAnswers = [data.correct?.trim()] || [];
+}
 if (existingId) {
   // EDIT MODE: replace
   const index = questions.findIndex(q => q.id === existingId);
@@ -226,7 +236,6 @@ function renderInfoFields() {
   }
   return div;
 }
-
 function renderImageFields() {
   const div = document.createElement('div');
   div.className = 'img-fields flex flex-col gap-2 my-2';
@@ -242,6 +251,19 @@ function renderImageFields() {
   uploadImg.required = true;
   uploadImg.className = "border p-2 rounded";
 
+  // ✅ Read as Base64 and store
+  uploadImg.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      uploadImg.dataset.imageData = e.target.result; // ✅ Base64 string
+      
+    };
+    reader.readAsDataURL(file);
+  });
+
   const input = document.createElement('input');
   input.type = 'text';
   input.name = "correct";
@@ -251,7 +273,6 @@ function renderImageFields() {
   div.append(label, uploadImg, input);
   return div;
 }
-
 function renderAssociationFields() {
   const container = document.createElement('div');
   container.className = 'association-container flex flex-col gap-4';
@@ -353,8 +374,13 @@ function setupEventListeners() {
     // ✅ Set preview flag
   localStorage.setItem("isPreview", "true");
   
-  window.location.href = "quiz.html"; 
+  const questionEditor = document.getElementById('question-editor');
+  questionEditor.innerHTML = '';
+  questionEditor.innerHTML = ` <iframe src="quiz.html" class = "w-full h-screen" title="Iframe Example"></iframe>
+`
+  // window.location.href = "quiz.html"; 
   });
+
  // ✅ Event delegation for delete buttons
   document.getElementById('questions-card').addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-btn')) {
@@ -370,6 +396,33 @@ function setupEventListeners() {
       editQuestion(id);
     }
   })
+
+  //Send Quiz link 
+document.getElementById('sendBtn').addEventListener('click', () => {
+  if (questions.length === 0) {
+    alert("No questions to preview.");
+    return;
+  }
+
+  // Convert quiz to a base64 string (safe for URL)
+  const quizData = btoa(JSON.stringify(questions));
+
+  // Generate a sharable link
+  const link = `${window.location.origin}/form.html?quiz=${quizData}`;
+
+  // Show link (copy/share)
+    const questionEditor = document.getElementById('question-editor');
+  questionEditor.innerHTML = '';
+  const divLink = document.createElement('div');
+  divLink.className ='w-[100%] bg-gray-100 p-5 rounded-xl'
+  const copyLink = document.createElement('p');
+  copyLink.textContent = link;
+  copyLink.className='overflow-auto word-break w-[100%] inline-block'
+  divLink.append(copyLink);
+  questionEditor.appendChild(divLink)
+
+});
+
 }
 
 function removeQuestion(id){
@@ -377,32 +430,36 @@ function removeQuestion(id){
       saveToLocalStorage(questions);
       renderQuestions(questions);
 }
-
-function editQuestion(id){
-  
+function editQuestion(id) {
   renderAddQuestionForm();
 
   const qToEdit = questions.find(q => q.id === id);
   const form = document.getElementById('question-form');
 
-  form.questionText.value = qToEdit.question;
-  form.point.value = qToEdit.point;
-  form.type.value = qToEdit.type;
-  form.topic.value = reverseTopicMap[qToEdit.topic] || "Choose a topic";
-  form.type.dispatchEvent(new Event("change"));
-
-    const reverseTopicMap = {
+  // ✅ reverse map first
+  const reverseTopicMap = {
     computerSystems: "Computer Systems (Hardware)",
     software: "Computer Systems (Software)",
     os: "Operating Systems",
     networking: "Networks",
     programming: "Programming",
-    info: "Choose a topic" // just in case
+    info: "Choose a topic"
   };
-  if (form.topic) {
-    form.topic.value = reverseTopicMap[qToEdit.topic] || "general";
-  }
-    if (qToEdit.type === "qcm" || qToEdit.type === "info") {
+
+  // Prefill
+  form.questionText.value = qToEdit.question;
+  form.point.value = qToEdit.point;
+  form.type.value = qToEdit.type;
+  form.topic.value = reverseTopicMap[qToEdit.topic] || "Choose a topic";
+
+  // ✅ set editId before submit handler
+  form.setAttribute("data-edit-id", qToEdit.id);
+
+  // Trigger field rendering *after* type set
+  form.type.dispatchEvent(new Event("change"));
+
+  // Fill answers depending on type
+  if (qToEdit.type === "qcm" || qToEdit.type === "info") {
     const answerInputs = form.querySelectorAll('input[name="answer[]"]');
     qToEdit.answers.forEach((ans, i) => {
       if (answerInputs[i]) answerInputs[i].value = ans;
@@ -413,34 +470,25 @@ function editQuestion(id){
       const letters = ['A', 'B', 'C', 'D'];
       correctSelect.value = letters[qToEdit.correct];
     }
-  }
-
-  else if (qToEdit.type === "img") {
+  } else if (qToEdit.type === "img") {
     const correctInput = form.querySelector('input[name="correct"]');
     if (correctInput) correctInput.value = qToEdit.correct || "";
-    // ⚠️ file input can’t be prefilled
-  }
-
-  else if (qToEdit.type === "association") {
+  } else if (qToEdit.type === "association") {
     const pairsContainer = form.querySelector(".pairs-list");
-    pairsContainer.innerHTML = ""; // clear default empty pair
+    pairsContainer.innerHTML = "";
     qToEdit.answers.forEach(pair => {
       addAssociationPair(pairsContainer);
       const lastRow = pairsContainer.lastElementChild;
       const targetInput = lastRow.querySelector('input[name="associationTarget"]');
       if (targetInput) targetInput.value = pair.target;
-      // ⚠️ file input can’t be prefilled → maybe show filename in a label
     });
   }
 
-  // 7. Switch form to "edit mode"
+  // Change button text
   const saveBtn = document.getElementById("saveBtn");
   saveBtn.textContent = "Update Question";
-
-  // Add a flag to know which question we’re editing
-  form.setAttribute("data-edit-id", qToEdit.id);
-  
 }
+
 document.addEventListener('DOMContentLoaded',()=>{
   setupEventListeners();
   questions = loadFromLocalStorage();

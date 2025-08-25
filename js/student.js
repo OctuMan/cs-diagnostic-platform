@@ -26,11 +26,15 @@ document.getElementById('submit-btn').addEventListener('click', (e)=> {
     if(studentInfo) {
         studentSessions.push(studentInfo);
         saveToLocalStorage();
-        window.location.href = 'quiz.html'
-        clearFields();
 
+        // ✅ Ensure quiz uses real questions, not preview
+        localStorage.setItem("isPreview", "false");
+
+        window.location.href = 'quiz.html';
+        clearFields();
     }
 });
+
 
 function saveToLocalStorage() {
     localStorage.setItem(ST_KEY, JSON.stringify(studentSessions));
@@ -42,3 +46,16 @@ function clearFields(){
         document.getElementById('studentClass').value ="";
 }
 
+// Check if quiz data is in URL
+const urlParams = new URLSearchParams(window.location.search);
+const quizParam = urlParams.get("quiz");
+
+if (quizParam) {
+  try {
+    const quizData = JSON.parse(atob(quizParam));
+    localStorage.setItem("dynamicQuiz", JSON.stringify(quizData));
+    localStorage.setItem("isPreview", "false");
+  } catch (e) {
+    console.error("Invalid quiz data in link", e);
+  }
+}

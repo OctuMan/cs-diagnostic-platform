@@ -453,6 +453,7 @@ copyBtn.addEventListener('click', () => {
   qrDisc.textContent = 'Or Scan This QR Code'
     
   const qrCodeContainer = document.createElement("div");
+  qrCodeContainer.className ='bg-red-500'
 
  
 
@@ -471,6 +472,88 @@ questionEditor.append(divLink,qrDisc, qrCodeContainer);
 
 
 });
+
+  // Download test button 
+document.getElementById('downloadBtn').addEventListener('click', async () => {
+  if (questions.length === 0) {
+    alert("No questions to preview.");
+    return;
+  }
+
+  const zip = new JSZip();
+
+  const dataFolder = zip.folder("data");
+  const imgFolder = zip.folder("images");
+  const cssFolder = zip.folder("css");
+  const jsFolder = zip.folder('js');
+  // Clone questions so we can rewrite paths
+  const packagedQuestions = JSON.parse(JSON.stringify(questions));
+
+  // Handle images (same as before)
+  for (let q of packagedQuestions) {
+    if (q.type === "img" && q.source) {
+      const imgData = q.source.split(",")[1];
+      const imgExt = q.source.includes("png") ? "png" : "jpg";
+      const imgName = `img-${q.id}.${imgExt}`;
+      q.source = `images/${imgName}`;
+      imgFolder.file(imgName, imgData, { base64: true });
+    }
+
+    if (q.type === "association" && q.answers) {
+      q.answers.forEach((pair, i) => {
+        if (pair.source) {
+          const imgData = pair.source.split(",")[1];
+          const imgExt = pair.source.includes("png") ? "png" : "jpg";
+          const imgName = `assoc-${q.id}-${i}.${imgExt}`;
+          pair.source = `images/${imgName}`;
+          imgFolder.file(imgName, imgData, { base64: true });
+        }
+      });
+    }
+  }
+
+  // Add testQuestions.json
+  dataFolder.file("testQuestions.json", JSON.stringify(packagedQuestions, null, 2));
+
+  // Add HTML files
+  const formHtml = await fetch("form.html").then(res => res.text());
+  zip.file("form.html", formHtml);
+
+  const quizHtml = await fetch("quiz.html").then(res => res.text());
+  zip.file("quiz.html", quizHtml);
+
+  // Add ALL CSS files dynamically
+  const cssFiles = [
+    "formStyles.css",
+    "framework.css",
+    "main.css",
+    "normalize.css",
+    "quizStyle.css"
+  ];
+
+  for (let cssFile of cssFiles) {
+    const cssContent = await fetch(`css/${cssFile}`).then(res => res.text());
+    cssFolder.file(cssFile, cssContent);
+  }
+
+    // Add ALL JS files dynamically
+  const jsFiles = [
+    "student.js",
+    "quiz.js",
+    "utilities.js",
+
+  ];
+ for (let jsFile of jsFiles) {
+    const jsContent = await fetch(`js/${jsFile}`).then(res => res.text());
+    jsFolder.file(jsFile, jsContent);
+  }
+  // Build and download ZIP
+  zip.generateAsync({ type: "blob" }).then(content => {
+    saveAs(content, "testPackage.zip");
+  });
+});
+
+
 
 }
 

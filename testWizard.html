@@ -8,6 +8,9 @@
          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
          <!-- Qr code generator library  -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- download as zip and save js  -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <title>TestBuilder</title>
 </head>
@@ -15,7 +18,7 @@
   <section class="p-4 md:p-10 ">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
        <div class="questions-list border shadow-lg px-2 grid h-fit gap-3 py-5 bg-[#fdfdfd] rounded-lg md:px-4 ">
-        <div class="controles-btns flex gap-2 flex-wrap">
+        <div class="controles-btns grid grid-cols-2 gap-2 md:flex md:flex-wrap">
        <button id="" class="addBtn p-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"><i class="fa-solid fa-plus mr-2"></i>Add Question</button>
        <button id="previewBtn" class="p-2 border border-gray-500 py-2 rounded-lg transition"><i class="fa-solid fa-eye mr-2"></i>Preview Test</button>
         <button id="sendBtn" class="p-2 border py-2  rounded-lg transition border-white bg-[#24A1DE] text-white"><i class="fa-solid fa-link  mr-2"></i>Send Test</button>

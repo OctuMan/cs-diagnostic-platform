@@ -401,76 +401,82 @@ function setupEventListeners() {
 
   //Send Quiz link 
 document.getElementById('sendBtn').addEventListener('click', () => {
-    if (questions.length === 0) {
+  if (questions.length === 0) {
     alert("No questions to preview.");
     return;
   }
 
-  // Generate a unique ID
+  // 🧹 Clean up old quiz entries (except current ones you need)
+  const keysToRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('quiz-') && key !== 'currentQuizId') {
+      keysToRemove.push(key);
+    }
+  }
+  keysToRemove.forEach(key => localStorage.removeItem(key));
+
+  // ✅ Now create new quiz ID
   const quizId = "quiz-" + Date.now();
 
-  // Save quiz locally
-  localStorage.setItem(quizId, JSON.stringify(questions));
+  try {
+    // Try to save
+    localStorage.setItem(quizId, JSON.stringify(questions));
+    localStorage.setItem("currentQuizId", quizId);
 
-  // Save this ID as the current quiz
+    // Generate shareable link
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+    const link = `${baseUrl}form.html?quiz=${quizId}`;
 
-  localStorage.setItem("currentQuizId", quizId);
+    // Display link and QR code...
+    const questionEditor = document.getElementById('question-editor');
+    questionEditor.innerHTML = '';
 
-  // Generate short link with just the ID 
-  const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
-  const link = `${baseUrl}form.html?quiz=${quizId}`;
+    const divLink = document.createElement('div');
+    divLink.className = 'w-full bg-gray-50 border border-gray-300 p-4 rounded-2xl shadow-sm flex items-center justify-between gap-3';
 
+    const linkBox = document.createElement('input');
+    linkBox.type = 'text';
+    linkBox.value = link;
+    linkBox.readOnly = true;
+    linkBox.className = 'flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono text-gray-700 focus:outline-none cursor-text';
 
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = '📋 Copy';
+    copyBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition';
 
-
-  // Show link (copy/share)
-const questionEditor = document.getElementById('question-editor');
-questionEditor.innerHTML = '';
-
-const divLink = document.createElement('div');
-divLink.className = 'w-full bg-gray-50 border border-gray-300 p-4 rounded-2xl shadow-sm flex items-center justify-between gap-3';
-
-// Text box (link)
-const linkBox = document.createElement('input');
-linkBox.type = 'text';
-linkBox.value = link;
-linkBox.readOnly = true;
-linkBox.className = 'flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono text-gray-700 focus:outline-none cursor-text';
-
-// Copy button
-const copyBtn = document.createElement('button');
-copyBtn.textContent = '📋 Copy';
-copyBtn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition';
-
-// Copy to clipboard
-copyBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(link);
-  copyBtn.textContent = '✅ Copied !';
-  setTimeout(() => (copyBtn.textContent = '📋 Copy'), 2000);
-});
-
-  const qrDisc = document.createElement('p')
-  qrDisc.textContent = 'Or Scan This QR Code'
-    
-  const qrCodeContainer = document.createElement("div");
-  qrCodeContainer.className ='bg-red-500'
-
- 
-
-    // Create a new QRCode instance
-    const qrcode = new QRCode(qrCodeContainer, {
-        text: link,
-        width: 180,
-        height: 180,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // Error correction level (L, M, Q, H)
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(link);
+      copyBtn.textContent = '✅ Copied!';
+      setTimeout(() => (copyBtn.textContent = '📋 Copy'), 2000);
     });
-// Append
-divLink.append(linkBox, copyBtn);
-questionEditor.append(divLink,qrDisc, qrCodeContainer);
 
+    const qrDisc = document.createElement('p');
+    qrDisc.textContent = 'Or Scan This QR Code';
 
+    const qrCodeContainer = document.createElement("div");
+    qrCodeContainer.className = 'mt-3 flex justify-center';
+
+    new QRCode(qrCodeContainer, {
+      text: link,
+      width: 180,
+      height: 180,
+      colorDark: "#000",
+      colorLight: "#fff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    divLink.append(linkBox, copyBtn);
+    questionEditor.append(divLink, qrDisc, qrCodeContainer);
+
+  } catch (err) {
+    if (err.name === 'QuotaExceededError') {
+      alert("❌ Cannot send test: Browser storage is full. Please clear old quizzes or use fewer images.");
+    } else {
+      alert("❌ Unknown error saving quiz: " + err.message);
+    }
+    console.error("localStorage error:", err);
+  }
 });
 
   // Download test button 
@@ -482,7 +488,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
   const zip = new JSZip();
 
-  const dataFolder = zip.folder("data");
+  
   const imgFolder = zip.folder("images");
   const cssFolder = zip.folder("css");
   const jsFolder = zip.folder('js');
@@ -513,7 +519,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   }
 
   // Add testQuestions.json
-  dataFolder.file("testQuestions.json", JSON.stringify(packagedQuestions, null, 2));
+  zip.file("testQuestions.json", JSON.stringify(packagedQuestions, null, 2));
 
   // Add HTML files
   const formHtml = await fetch("form.html").then(res => res.text());

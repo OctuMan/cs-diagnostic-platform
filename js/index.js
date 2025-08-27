@@ -14,6 +14,12 @@ if (isHidden) {
 }
 });
 
+const allLinks = document.querySelectorAll('.navbar a');
+allLinks.forEach(link =>{
+    link.addEventListener('click',()=> {
+        navbar.classList.add('hidden');
+    })
+})
 // Get & Store Date
 var today = new Date();
 today = today.getFullYear();

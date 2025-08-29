@@ -464,7 +464,12 @@ function backgroundQuestions(){
       if(!infoQuestions[questionName]){
           infoQuestions[questionName]= {Yes : 0, No:0};
         }
-        question.answer === 'Oui'? infoQuestions[questionName].Yes+=1: infoQuestions[questionName].No+=1;
+          const ans = String(question.answer).trim().toLowerCase();
+      if (ans === 'oui' || ans === 'yes') {
+          infoQuestions[questionName].Yes += 1;
+      } else if (ans === 'non' || ans === 'no') {
+          infoQuestions[questionName].No += 1;
+      }
     }
   })
 // get the container 
@@ -530,8 +535,13 @@ function backgroundClassQuestions(classResult){
       if(!infoQuestions[questionName]){
           infoQuestions[questionName]= {Yes : 0, No:0};
         }
-        question.answer === 'Oui'? infoQuestions[questionName].Yes+=1: infoQuestions[questionName].No+=1;
-    }
+            const ans = String(question.answer).trim().toLowerCase();
+if (ans === 'oui' || ans === 'yes') {
+    infoQuestions[questionName].Yes += 1;
+} else if (ans === 'non' || ans === 'no') {
+    infoQuestions[questionName].No += 1;
+}
+        }
   })
 // get the container 
     const bgQuestionConatainer = document.getElementById('background-questions');

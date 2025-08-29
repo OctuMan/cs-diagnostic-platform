@@ -147,23 +147,30 @@ const id = existingId || "id-" + Date.now();
 
 else if (question.type === 'img') {
   const imgInput = form.querySelector('input[name="questionImg"]');
+  const correctInput = form.querySelector('input[name="correct"]'); // Get the correct answer input
   const file = imgInput.files[0];
+  
   if (!file) {
-    alert("❌ Please upload an image.");
+    alert("⚠ Please upload an image.");
     return;
   }
 
   const base64Image = imgInput.dataset.imageData;
-
-  
-
   if (!base64Image) {
-    alert("❌ Image not loaded. Wait for upload.");
+    alert("⚠ Image not loaded. Wait for upload.");
+    return;
+  }
+
+  // Get the correct answer from the input field
+  const correctAnswer = correctInput ? correctInput.value.trim() : '';
+  if (!correctAnswer) {
+    alert("⚠ Please provide a correct answer.");
     return;
   }
 
   question.source = base64Image; 
-  question.validAnswers = [data.correct?.trim()] || [];
+  // ✅ Fix: Properly set correctAnswers with the actual answer
+  question.correctAnswers = [correctAnswer];
 }
 if (existingId) {
   // EDIT MODE: replace
@@ -488,7 +495,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
   const zip = new JSZip();
 
-  
+  const dataFolder = zip.folder("data");
   const imgFolder = zip.folder("images");
   const cssFolder = zip.folder("css");
   const jsFolder = zip.folder('js');
@@ -519,7 +526,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   }
 
   // Add testQuestions.json
-  zip.file("testQuestions.json", JSON.stringify(packagedQuestions, null, 2));
+  dataFolder.file("testQuestions.json", JSON.stringify(packagedQuestions, null, 2));
 
   // Add HTML files
   const formHtml = await fetch("form.html").then(res => res.text());
@@ -689,7 +696,8 @@ function renderQuestions(questionData) {
       const answers = ['A', 'B', 'C', 'D'];
       correct.textContent = `✔ ${answers[question.correct]}`;
     } else if (question.type === 'img') {
-      correct.textContent = `Answer: ${question.correct || "—"}`;
+      const correctAnswer = question.validAnswers?.[0] || "—";
+  correct.textContent = `Answer: ${correctAnswer}`;
     } else if (question.type === 'association') {
       correct.textContent = `Pairs: ${question.answers.length}`;
     } else {

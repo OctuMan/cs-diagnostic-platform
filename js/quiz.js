@@ -316,6 +316,7 @@ function studentResultsScreen() {
   resultArea.replaceChildren();
   let resutlHeader = document.createElement('h2');
   resutlHeader.textContent = 'Test terminé';
+  resutlHeader.className ="text-xl font-bold"
   let resultAllAns = document.createElement('p');
   resultAllAns.textContent = `Tu as répondu à ${quizState.userAnswers.length} questions.`;
   resultArea.append(resutlHeader, resultAllAns);
@@ -415,14 +416,24 @@ function analyzeResults(userAnswers, questionData) {
   }); 
  
         
-      }else if(question.type === 'img'){
-        const correctAnswers = question.correct ? [question.correct] : [];
+      }else if (question.type === 'img') {
+  // ✅ Use correctAnswers, not correct
+ const correctAnswers = question.correctAnswers || question.validAnswers || [];
   const point = question.point || 1;
   results.totalPoints += point;
 
-  // Normalize both user answer and valid answers for fair comparison
+  // ✅ Debug logging (remove after fixing)
+  console.log('Image Question Debug:', {
+    userAnswer: userAnswer,
+    correctAnswers: correctAnswers,
+    questionData: question
+  });
+
+  // Normalize for case-insensitive comparison
   const normalizedUserAnswer = String(userAnswer).trim().toLowerCase();
-  const normalizedCorrects = correctAnswers.map(ans => String(ans).trim().toLowerCase());
+  const normalizedCorrects = correctAnswers.map(ans => 
+    String(ans).trim().toLowerCase()
+  );
 
   const isCorrect = normalizedCorrects.includes(normalizedUserAnswer);
 
@@ -436,11 +447,10 @@ function analyzeResults(userAnswers, questionData) {
   results.knowledgeAnswers.push({
     question: question.question,
     userAnswer: userAnswer,
-    correctAnswers: correctAnswers, // keep for review
+    correctAnswers: correctAnswers,
     isCorrect: isCorrect
   });
-        
-      }
+}
       
   }}
 

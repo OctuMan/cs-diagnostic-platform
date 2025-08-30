@@ -244,7 +244,7 @@ function renderAvgByClass(classResult){
   else if (classAvg < 75) fillClass = 'prog-fill-orange';
   else fillClass = 'prog-fill-green';
   const progressContainer = document.getElementById('progress-container');
-  progressContainer.innerHTML = `<div class="class-info d-flex flex-between mb-10 font-14">
+  progressContainer.innerHTML = `<div class="class-info flex flex-between mb-3 font-semibold">
                                     <span class="class-name">${className}</span>
                                     <span class="class-score">${classAvg}%</span>
                                 </div>
@@ -308,7 +308,7 @@ function renderAllClassesAvg() {
     const divEle = document.createElement('div');
     divEle.className = 'class-item mb-15';
     divEle.innerHTML = `
-      <div class="class-info d-flex flex-between mb-10 font-14">
+      <div class="class-info flex flex-between mb-3 font-semibold">
         <span class="class-name">${className}</span>
         <span class="class-score">${avg}%</span>
       </div>
@@ -380,7 +380,7 @@ Object.keys(topics).forEach(topic => {
     const topicEl = document.createElement('div');
       topicEl.className = 'topic-item mb-15';
       topicEl.innerHTML = `
-        <div class="topic-info d-flex flex-between mb-10 font-14">
+        <div class="topic-info flex flex-between mb-3 font-semibold">
           <span class="topic-name">${formatTopicName(topic)}</span>
           <span class="topic-score">${avg}% (${topicName.correct}/${topicName.total})</span>
         </div>
@@ -437,7 +437,7 @@ Object.keys(topics).sort().forEach(topic => {
       const topicEl = document.createElement('div');
       topicEl.className = 'topic-item mb-15';
       topicEl.innerHTML = `
-        <div class="topic-info d-flex flex-between mb-10 font-14">
+        <div class="topic-info flex flex-between mb-3 font-semibold">
           <span class="topic-name">${formatTopicName(topic)}</span>
           <span class="topic-score">${avg}% </span>
         </div>
@@ -452,77 +452,94 @@ Object.keys(topics).sort().forEach(topic => {
 
 
 // get diagnostic all questions
-
-function backgroundQuestions(){
+function backgroundQuestions() {
   const allResults = getSessionsFromLS();
+  if (!allResults || allResults.length === 0) {
+    document.getElementById('background-questions').innerHTML = 
+      '<p class="col-span-full text-gray-500 text-center py-4">Aucune donnée disponible</p>';
+    return;
+  }
+
   const infoQuestions = {};
-  const infoQuestionsAvg = {};
+
+  // Collect data
   allResults.forEach(bgQuestion => {
     const arrayInfoQuestion = bgQuestion.results.infoAnswers;
-    for(let question of arrayInfoQuestion){
+    arrayInfoQuestion.forEach(question => {
       const questionName = question.question;
-      if(!infoQuestions[questionName]){
-          infoQuestions[questionName]= {Yes : 0, No:0};
-        }
-          const ans = String(question.answer).trim().toLowerCase();
+      const ans = String(question.answer).trim().toLowerCase();
+
+      if (!infoQuestions[questionName]) {
+        infoQuestions[questionName] = { Yes: 0, No: 0 };
+      }
+
       if (ans === 'oui' || ans === 'yes') {
-          infoQuestions[questionName].Yes += 1;
+        infoQuestions[questionName].Yes += 1;
       } else if (ans === 'non' || ans === 'no') {
-          infoQuestions[questionName].No += 1;
+        infoQuestions[questionName].No += 1;
       }
-    }
-  })
-// get the container 
-    const bgQuestionConatainer = document.getElementById('background-questions');
-    bgQuestionConatainer.replaceChildren();
+    });
+  });
+
+  const container = document.getElementById('background-questions');
+  container.innerHTML = '';
+
   Object.keys(infoQuestions).forEach(question => {
+    const data = infoQuestions[question];
+    const total = data.Yes + data.No;
+    if (total === 0) return;
 
-    const total = infoQuestions[question].Yes + infoQuestions[question].No;
-    const avgYes = Math.round((infoQuestions[question].Yes / total) * 100);
-    const avgNo = Math.round((infoQuestions[question].No / total) * 100);
-   const chartId = `chart-${btoa(unescape(encodeURIComponent(question))).replace(/=/g, '')}`;
+    const avgYes = Math.round((data.Yes / total) * 100);
+    const avgNo = Math.round((data.No / total) * 100);
 
-    
-        if(!infoQuestionsAvg[question]){
-          infoQuestionsAvg[question]= {avgYes : 0, avgNo:0};
+    // Sanitized ID
+    const safeId = 'chart-' + btoa(unescape(encodeURIComponent(question))).replace(/=/g, '');
+
+    // Create chart card
+    const chartCard = document.createElement('div');
+    chartCard.className = 'bg-gray-50 rounded-lg p-4 text-center border';
+    chartCard.innerHTML = `
+      <h4 class="font-medium text-gray-800 text-sm mb-3 line-clamp-2 h-10">${question}</h4>
+      <div class="flex justify-center mb-3">
+        <canvas id="${safeId}" width="200" height="120"></canvas>
+      </div>
+      <div class="text-xs text-gray-600 space-y-1">
+      <div>
+      
+        <div><strong>Oui:</strong> ${avgYes}%</div>
+        <div><strong>Non:</strong> ${avgNo}%</div>
+      </div>
+    `;
+    container.appendChild(chartCard);
+
+    // Render chart
+    const ctx = document.getElementById(safeId).getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Oui', 'Non'],
+        datasets: [{
+          data: [avgYes, avgNo],
+          backgroundColor: ['#0784eb', '#e0e0e0'],
+          borderWidth: 1,
+          cutout: '70%' // Donut style
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
         }
-        infoQuestionsAvg[question].avgYes = avgYes;
-        infoQuestionsAvg[question].avgNo = avgNo;
-    const topicEl = document.createElement('div');
-    topicEl.className = "card bg-white brad-8 p-20 d-flex flex-column gap-5";
-    topicEl.style.width = '400px';
-    topicEl.style.height = '300px';
-    topicEl.innerHTML = `<h4 >${question}</h4>
-                        <canvas id="${chartId}" class="pb-10" width="400" height="200"></canvas>`
-
-    bgQuestionConatainer.appendChild(topicEl)
-
- new Chart(document.getElementById(chartId), {
-    type: "doughnut",
-    data: {
-      labels:["Oui", "Non"],
-      datasets: [{
-        label: "Average Score (%)",
-        data: [avgYes, avgNo],
-        backgroundColor: [
-        "#0784eb",
-        "#eee",
-        
-      ],
-
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: { beginAtZero: true, max: 100 }
       }
-    }
+    });
   });
-  });
-  
-}
 
+  if (container.children.length === 0) {
+    container.innerHTML = '<p class="col-span-full text-gray-500 text-center py-4">Aucune réponse à afficher</p>';
+  }
+}
 
 
 function backgroundClassQuestions(classResult){
@@ -544,49 +561,65 @@ if (ans === 'oui' || ans === 'yes') {
         }
   })
 // get the container 
-    const bgQuestionConatainer = document.getElementById('background-questions');
-    bgQuestionConatainer.replaceChildren();
+
+  const container = document.getElementById('background-questions');
+  container.innerHTML = '';
+
   Object.keys(infoQuestions).forEach(question => {
+    const data = infoQuestions[question];
+    const total = data.Yes + data.No;
+    if (total === 0) return;
 
-    const total = infoQuestions[question].Yes + infoQuestions[question].No;
-    const avgYes = Math.round((infoQuestions[question].Yes / total) * 100);
-    const avgNo = Math.round((infoQuestions[question].No / total) * 100);
-const chartId = `chart-${btoa(unescape(encodeURIComponent(question))).replace(/=/g, '')}`;
-   
-    
-    const topicEl = document.createElement('div');
-    topicEl.className = "card bg-white brad-8 p-20 d-flex flex-column gap-5";
-    topicEl.style.width = '400px';
-    topicEl.style.height = '300px';
-    topicEl.innerHTML = `<h4 >${question}</h4>
-                        <canvas id="${chartId}" class="pb-10" width="400" height="200"></canvas>`
+    const avgYes = Math.round((data.Yes / total) * 100);
+    const avgNo = Math.round((data.No / total) * 100);
 
-    bgQuestionConatainer.appendChild(topicEl)
+    // Sanitized ID
+    const safeId = 'chart-' + btoa(unescape(encodeURIComponent(question))).replace(/=/g, '');
 
+    // Create chart card
+    const chartCard = document.createElement('div');
+    chartCard.className = 'bg-gray-50 rounded-lg p-4 text-center border';
+    chartCard.innerHTML = `
+      <h4 class="font-medium text-gray-800 text-sm mb-3 line-clamp-2 h-10">${question}</h4>
+      <div class="flex justify-center mb-3">
+        <canvas id="${safeId}" width="200" height="120"></canvas>
+      </div>
+      <div class="text-xs text-gray-600 space-y-1">
+      <div>
+      
+        <div><strong>Oui:</strong> ${avgYes}%</div>
+        <div><strong>Non:</strong> ${avgNo}%</div>
+      </div>
+    `;
+    container.appendChild(chartCard);
 
- new Chart(document.getElementById(chartId), {
-    type: "doughnut",
-    data: {
-      labels:["Oui", "Non"],
-      datasets: [{
-        label: "Average Score (%)",
-        data: [avgYes, avgNo],
-        backgroundColor: [
-        "#0784eb",
-        "#eee",
-        
-      ],
-
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: { beginAtZero: true, max: 100 }
+    // Render chart
+    const ctx = document.getElementById(safeId).getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Oui', 'Non'],
+        datasets: [{
+          data: [avgYes, avgNo],
+          backgroundColor: ['#0784eb', '#e0e0e0'],
+          borderWidth: 1,
+          cutout: '70%' // Donut style
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        }
       }
-    }
+    });
   });
-  });
+
+  if (container.children.length === 0) {
+    container.innerHTML = '<p class="col-span-full text-gray-500 text-center py-4">Aucune réponse à afficher</p>';
+  }
   
 } 
 const searchInput = document.getElementById('student-search-input');
@@ -653,25 +686,31 @@ function renderStudentTable(results) {
     const row = document.createElement('tr');
 
     row.innerHTML = `
-      <td>${studentName}</td>
-      <td>
-        <div class="topic-info d-flex flex-between flex-align-items gap-10 font-14" style="width: 8rem">
-          <span class="topic-score">${francophoneSysMarks(data.score)}/20</span>
-          <div class="progress-bar">
-            <div class="progress-fill animate ${fillClass}" style="--target-fill: ${data.score}%;"></div>
-          </div>
-        </div>
-      </td>
-      <td><span class="${statusClass}">${data.status}</span></td>
-      <td>${data.className}</td>
-      <td>
-        <button class="btn-student d-flex gap-10 flex-align-items brad-8" data-student="${studentName}">
-          <i class="fa-solid fa-eye"></i>
-          <span>View Report</span>
-        </button>
-      </td>
-    `;
-
+  <td class="px-4 py-2 text-gray-700 font-medium">${studentName}</td>
+  <td class="px-4 py-2">
+    <div class="flex items-center justify-between gap-3 text-sm w-32">
+      <span class="text-gray-800 font-semibold">${francophoneSysMarks(data.score)}/20</span>
+      <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div class="h-2 rounded-full transition-all duration-500 ${fillClass}" style="width: ${data.score}%"></div>
+      </div>
+    </div>
+  </td>
+  <td class="px-4 py-2">
+    <span class="px-2 py-1 text-xs font-semibold rounded-full 
+      ${data.status === "Avancé(e)" ? "bg-green-100 text-green-700" : 
+        data.status.includes("Intermédiaire") ? "bg-yellow-100 text-yellow-700" : 
+        "bg-red-100 text-red-700"}">
+      ${data.status}
+    </span>
+  </td>
+  <td class="px-4 py-2 text-sm text-gray-600">${data.className}</td>
+  <td class="px-4 py-2">
+    <button class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-lg shadow transition" data-student="${studentName}">
+      <i class="fa-solid fa-eye"></i>
+      <span>View Report</span>
+    </button>
+  </td>
+`;
     tableBody.appendChild(row);
 
 

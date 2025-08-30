@@ -8,7 +8,7 @@
 }
 a,a:active, a:visited {
     text-decoration: none;
-    color: #333;
+    /* color: #333; */
 }
 
 body{
@@ -26,23 +26,13 @@ body{
     margin-bottom: 5px;
 }
 
-.sidebar p, .main-header p{
-    color: #00000096;
-    font-size: 15px;
-    
-}
-.sidebar hr {
-    
-    border: #c2c2c2 0.2px solid;
-}
 
 li.active{
-    background-color: #0084ff1f;
-    border-right: solid 2px #0784eb;
+   
+    border-right: solid 2px #ffffff;
     
 }
-a.active {
-    color: #0784eb;}
+
 
 .sidebar ul li {
     padding: 15px;
@@ -182,6 +172,7 @@ tr:not(thead tr):hover {background-color: #f7f7f7;}
     font-weight: 500;
     font-size: 0.75rem;
     cursor: pointer;
+    border-radius: 8px;
 }
 .upload-btn{
   color: #fff;
@@ -444,7 +435,7 @@ tbody tr:nth-child(even) {
 
 .info-table th {
   background-color: #007BFF;
-}
+} 
 
 .printable-chart h3 {
   margin-top: 2rem;
@@ -456,20 +447,3 @@ tbody tr:nth-child(even) {
   background-color: #0784eb;
 }
 
-.sidebar {
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar.hidden {
-  transform: translateX(-100%);
-}
-
-/* Slide-in effect */
-.sidebar:not(.hidden) {
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}

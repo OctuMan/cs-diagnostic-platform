@@ -705,7 +705,7 @@ function renderStudentTable(results) {
   </td>
   <td class="px-4 py-2 text-sm text-gray-600">${data.className}</td>
   <td class="px-4 py-2">
-    <button class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-lg shadow transition" data-student="${studentName}">
+    <button class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-lg shadow transition" id="btn-student" data-student="${studentName}">
       <i class="fa-solid fa-eye"></i>
       <span>View Report</span>
     </button>
@@ -942,7 +942,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Use event delegation: listen on tbody, check if button was clicked
   tableBody.addEventListener('click', (e) => {
-    const btn = e.target.closest('button.btn-student');
+    const btn = e.target.closest('#btn-student');
+    console.log('clicked')
     if (btn) {
       const studentName = btn.dataset.student;
       const report = generateStudentReport(studentName);
